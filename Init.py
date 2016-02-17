@@ -1,3 +1,3 @@
 import sys
 
-sys.stdout.wirte("test")
+sys.stdout.write("test")
