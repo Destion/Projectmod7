@@ -16,8 +16,7 @@ def generateNeighbourList(G: graph, directed=False):
 def haveSameNeighbours(v1, v2, neighbours, a):
     if len(neighbours[v1]) != len(neighbours[v2]):
         return False
-    print(a, v1, v2)
-    return [a[v] for v in neighbours[v1]] == [a[v] for v in neighbours[v2]]
+    return sorted([a[v] for v in neighbours[v1]]) == sorted([a[v] for v in neighbours[v2]])
 
 
 def refineColors(G: graph):
@@ -27,29 +26,31 @@ def refineColors(G: graph):
     nextColor = 0
     for v in G.V():
         a[v] = len(neighbours[v])
-        nextColor = max(len(neighbours[v]), nextColor) + 1
+        nextColor = max(len(neighbours[v]) + 1, nextColor)
 
     while aPrev != a:
-        print("Loop!")
         aPrev = a
         a = dict()
-        for u in G.V():
-            for v in G.V():
+        for i in range(len(G.V())):
+            u = G.V()[i]
+            nc = a.get(u, aPrev[u])
+            same = set()
+            for v in G.V()[i + 1:]:
                 if u != v and aPrev[u] == aPrev[v]:
                     if not haveSameNeighbours(u, v, neighbours, aPrev):
-                        print("Waaaahhhh")
-                        print(nextColor)
-                        a[u] = nextColor
-                        a[v] = aPrev[v]
-                        nextColor += 1
+                        if nc == aPrev[u]:
+                            nc = nextColor
+                            nextColor += 1
                     else:
-                        a[v] = aPrev[v]
-                        a[u] = aPrev[u]
-                else:
-                    a[v] = aPrev[v]
-                    a[u] = aPrev[u]
-    print("\n\n\n\nDONE:")
-    print(a)
+                        same.add(v)
+            for v in same:
+
+                if nc != a.get(v, aPrev[v]):
+
+                    a[v] = nc
+
+            a[u] = nc
+
     for v in a:
         v.colornum = a[v]
 
