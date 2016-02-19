@@ -1,6 +1,7 @@
 import graphIO
 from basicgraphs import graph
 from graphIO import loadgraph
+from graphUtil import disjointUnion
 
 
 def generateNeighbourList(G: graph, directed=False):
@@ -12,6 +13,7 @@ def generateNeighbourList(G: graph, directed=False):
         if not directed:
             neighbours[e.head()].add(e.tail())
     return neighbours
+
 
 def haveSameNeighbours(v1, v2, neighbours, a):
     if len(neighbours[v1]) != len(neighbours[v2]):
@@ -36,7 +38,7 @@ def refineColors(G: graph):
         aPrev = a
         a = dict()
 
-        #for each vertex u in G.V()
+        # for each vertex u in G.V()
         for i in range(len(G.V())):
             u = G.V()[i]
 
@@ -52,7 +54,7 @@ def refineColors(G: graph):
                 # if the vertices were "equal" and not exactly the same
                 if u != v and aPrev[u] == aPrev[v]:
 
-                    #Check if they are still "equal"
+                    # Check if they are still "equal"
                     if not haveSameNeighbours(u, v, neighbours, aPrev):
 
                         # they are not equal anymore, if we haven't updated nc already, do it now
@@ -78,8 +80,50 @@ def refineColors(G: graph):
     return a
 
 
-if __name__ == "__main__":
-    g = loadgraph("./data/colorref_smallexample_4_16.grl")
-    print(refineColors(g))
-    graphIO.writeDOT(g, "output.dot")
+def areIsomorph(G1: graph, G2: graph):
+    # This function requires that the disjointUnion places all vertices of G1 after or before all vertices of G2
+    if len(G1.V()) != len(G2.V()) or len(G1.E()) != len(G2.E()):
+        return False
+    G = disjointUnion(G1, G2)
+    a = refineColors(G)
 
+    # the colordict will be filled with all the colors as keys and a value that represents the status:
+    # 0 = in second graph, but not first, 1 = in first graph, 2 = in first and second graph
+    colorDict = dict()
+    i = 0
+    for k in G.V():
+        v = a[k]
+        if i >= len(G1.V()):
+            if colorDict.get(v, 0) != 0:
+                colorDict[v] = 2
+            else:
+                colorDict[v] = 0
+        else:
+            colorDict[v] = 1
+        i += 1
+
+
+    for c in colorDict:
+        v = colorDict[c]
+        if v < 2:
+            return False
+
+    return True
+
+def getAllIsomorphisms(graphList):
+    groups = [[graphList[0]]]
+    for g in graphList[1:]:
+        placed = False
+        for group in groups:
+            if areIsomorph(g, group[0]):
+                group.append(g)
+                placed = True
+                break
+        if not placed:
+            groups.append([g])
+    return groups
+
+if __name__ == "__main__":
+    gl = loadgraph("./data/colorref_smallexample_6_15.grl", readlist=True)
+    for group in getAllIsomorphisms(gl[0]):
+        print("Group with size: ", len(group))
