@@ -42,7 +42,7 @@ def disjointUnion(g: graph, h: graph):
     return f
 
 
-def disjointUnionMulti(graphList):
+def disjointUnionMulti(graphList, holdColor=False):
     f = graph(sum([len(g.V()) for g in graphList]))
     inclist = dict()
     combinedList = [v for g in graphList for v in g]
@@ -50,6 +50,8 @@ def disjointUnionMulti(graphList):
         inclist.update(generateNeighbourList(g, inclists=True))
     for i in range(len(combinedList)):
         v = combinedList[i]
+        if holdColor:
+            f.V()[i] = v.colornum
         for e in inclist[v]:
             if e.tail() == v:
                 f.addedge(f[i], f[combinedList.index(e.head())])

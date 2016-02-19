@@ -2,12 +2,22 @@ import graphIO
 from basicgraphs import graph
 from graphIO import loadgraph
 from graphUtil import disjointUnionMulti, generateNeighbourList
+from util import compareListsUnordered
 
 
-def haveSameNeighbours(v1, v2, neighbours, a):
-    if len(neighbours[v1]) != len(neighbours[v2]):
+def haveSameNeighbours(v1, v2, neighbourColors):
+    if len(neighbourColors[v1]) != len(neighbourColors[v2]):
         return False
-    return sorted([a[v] for v in neighbours[v1]]) == sorted([a[v] for v in neighbours[v2]])
+    return neighbourColors[v1] == neighbourColors[v2]
+
+
+def getNeighbourColors(neighbours, a):
+    nbColors = dict()
+    for g in neighbours:
+        nbColors[g] = dict()
+        for nb in neighbours[g]:
+            nbColors[g][a[nb]] = nbColors[g].get(a[nb], 0) + 1
+    return nbColors
 
 
 def refineColors(G: graph):
@@ -26,7 +36,7 @@ def refineColors(G: graph):
     while aPrev != a:
         aPrev = a
         a = dict()
-
+        nbColors = getNeighbourColors(neighbours, aPrev)
         # for each vertex u in G.V()
         for i in range(len(G.V())):
             u = G.V()[i]
@@ -44,7 +54,7 @@ def refineColors(G: graph):
                 if u != v and aPrev[u] == aPrev[v]:
 
                     # Check if they are still "equal"
-                    if not haveSameNeighbours(u, v, neighbours, aPrev):
+                    if not haveSameNeighbours(u, v, nbColors):
 
                         # they are not equal anymore, if we haven't updated nc already, do it now
                         if nc == aPrev[u]:
@@ -84,6 +94,7 @@ def areIsomorph(G: graph, i1, i2, l1, l2, a):
     # the colordict will be filled with all the colors as keys and a value that represents the status:
     # 0 = in second graph, but not first, 1 = in first graph, 2 = in first and second graph
 
+    # these lists are the parts of the full vertex list G.V() that belonged to the graphs we are testing
     G1v = G.V()[i1: i1 + l1]
     G2v = G.V()[i2: i2 + l2]
 
@@ -109,7 +120,10 @@ def areIsomorph(G: graph, i1, i2, l1, l2, a):
 
 
 def getAllIsomorphisms(graphList):
+    # Make a list of groups
     groups = [[graphList[0]]]
+
+    # these lists hold indices of our graphs in the vertex list of our union graph and the lengths of the vertex lists
     groupStartIndices = [0]
     startIndices = [0]
     lenghts = [len(graphList[0].V())]
@@ -118,10 +132,17 @@ def getAllIsomorphisms(graphList):
         startIndices.append(startIndices[-1] + lenghts[-1])
         lenghts.append(len(g.V()))
 
+    # create one gaint graph containing all the graphs in our graphlist
     G = disjointUnionMulti(graphList)
+
+    # execute the refineColors function on our union graph
     a = refineColors(G)
     i = 1
+
+    # fill the groups based on our new color data
     for g in graphList[1:]:
+
+        # this boolean indicates whether the current graph has been placed in a group
         placed = False
         for groupI in range(len(groups)):
             if areIsomorph(G, startIndices[i], startIndices[groupStartIndices[groupI]],
@@ -129,14 +150,21 @@ def getAllIsomorphisms(graphList):
                 groups[groupI].append(g)
                 placed = True
                 break
+        # if our graph is not yet placed, it belongs to a new group
         if not placed:
             groups.append([g])
             groupStartIndices.append(i)
         i += 1
-    return groups
+    return groups, G
 
 
 if __name__ == "__main__":
-    gl = loadgraph("./data/colorref_largeexample_6_960.grl", readlist=True)
-    for group in getAllIsomorphisms(gl[0]):
+    gl = loadgraph("./data/colorref_smallexample_4_7.grl", readlist=True)
+
+    i = 0
+    groups, G = getAllIsomorphisms(gl[0])
+    graphIO.writeDOT(G, "./output.dot")
+    for group in groups:
         print("Group with size: ", len(group))
+        graphIO.writeDOT(disjointUnionMulti(group), "./output%i.dot" % i)
+        i += 1
