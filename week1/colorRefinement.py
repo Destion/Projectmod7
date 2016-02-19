@@ -1,18 +1,7 @@
 import graphIO
 from basicgraphs import graph
 from graphIO import loadgraph
-from graphUtil import disjointUnion
-
-
-def generateNeighbourList(G: graph, directed=False):
-    neighbours = dict()
-    for v in G.V():
-        neighbours[v] = set()
-    for e in G.E():
-        neighbours[e.tail()].add(e.head())
-        if not directed:
-            neighbours[e.head()].add(e.tail())
-    return neighbours
+from graphUtil import disjointUnionMulti, generateNeighbourList
 
 
 def haveSameNeighbours(v1, v2, neighbours, a):
@@ -80,20 +69,29 @@ def refineColors(G: graph):
     return a
 
 
-def areIsomorph(G1: graph, G2: graph):
-    # This function requires that the disjointUnion places all vertices of G1 after or before all vertices of G2
-    if len(G1.V()) != len(G2.V()) or len(G1.E()) != len(G2.E()):
-        return False
-    G = disjointUnion(G1, G2)
-    a = refineColors(G)
+def areIsomorph(G: graph, i1, i2, l1, l2, a):
+    """
+
+    :param G: The graph containing a disjoint union of all graphs
+    :param i1: The index of the first vertex of G1 in G
+    :param i2: The index of the first vertex of G2 in G
+    :param l1: The length of G1.V()
+    :param l2: The length of G2.V()
+    :param a: The colors of G.V() returned by refineColors()
+    :return: Whether G1 an G2 are isomorph according to G and a
+    """
 
     # the colordict will be filled with all the colors as keys and a value that represents the status:
     # 0 = in second graph, but not first, 1 = in first graph, 2 = in first and second graph
+
+    G1v = G.V()[i1: i1 + l1]
+    G2v = G.V()[i2: i2 + l2]
+
     colorDict = dict()
     i = 0
-    for k in G.V():
+    for k in G1v + G2v:
         v = a[k]
-        if i >= len(G1.V()):
+        if i >= l1:
             if colorDict.get(v, 0) != 0:
                 colorDict[v] = 2
             else:
@@ -102,7 +100,6 @@ def areIsomorph(G1: graph, G2: graph):
             colorDict[v] = 1
         i += 1
 
-
     for c in colorDict:
         v = colorDict[c]
         if v < 2:
@@ -110,20 +107,36 @@ def areIsomorph(G1: graph, G2: graph):
 
     return True
 
+
 def getAllIsomorphisms(graphList):
     groups = [[graphList[0]]]
+    groupStartIndices = [0]
+    startIndices = [0]
+    lenghts = [len(graphList[0].V())]
+
+    for g in graphList:
+        startIndices.append(startIndices[-1] + lenghts[-1])
+        lenghts.append(len(g.V()))
+
+    G = disjointUnionMulti(graphList)
+    a = refineColors(G)
+    i = 1
     for g in graphList[1:]:
         placed = False
-        for group in groups:
-            if areIsomorph(g, group[0]):
-                group.append(g)
+        for groupI in range(len(groups)):
+            if areIsomorph(G, startIndices[i], startIndices[groupStartIndices[groupI]],
+                           lenghts[i], lenghts[groupStartIndices[groupI]], a):
+                groups[groupI].append(g)
                 placed = True
                 break
         if not placed:
             groups.append([g])
+            groupStartIndices.append(i)
+        i += 1
     return groups
 
+
 if __name__ == "__main__":
-    gl = loadgraph("./data/colorref_smallexample_6_15.grl", readlist=True)
+    gl = loadgraph("./data/colorref_largeexample_6_960.grl", readlist=True)
     for group in getAllIsomorphisms(gl[0]):
         print("Group with size: ", len(group))
