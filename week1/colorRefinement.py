@@ -19,6 +19,12 @@ def getNeighbourColors(neighbours, a):
             nbColors[g][a[nb]] = nbColors[g].get(a[nb], 0) + 1
     return nbColors
 
+def addToRevDict(d: dict, k, e):
+    if d.get(k, None) is None:
+        d[k] = {e}
+    else:
+        d[k].add(e)
+
 
 def refineColors(G: graph):
     a = dict()
@@ -71,6 +77,75 @@ def refineColors(G: graph):
                 if nc != a.get(v, aPrev[v]):
                     a[v] = nc
             a[u] = nc
+
+    # set the colornums
+    for v in a:
+        v.colornum = a[v]
+
+    return a
+
+def refineColorsv2(G: graph):
+    a = dict()
+    aPrev = dict()
+    aRev = dict()
+    aRevPrev = dict()
+    neighbours = generateNeighbourList(G)
+
+    # define a number that gives a color that has not yet been chosen
+    nextColor = 0
+    # Fill a with colors related to the degree of the vertex
+    for v in G.V():
+        if aRev.get(len(neighbours[v]), None) is None:
+            aRev[len(neighbours[v])] = {v}
+        else:
+            aRev[len(neighbours[v])].add(v)
+        a[v] = len(neighbours[v])
+        nextColor = max(len(neighbours[v]) + 1, nextColor)
+
+    # while the colors still change after an iteration
+    while aPrev != a:
+        aPrev = a
+        aRevPrev = aRev
+        a = dict()
+        aRev = dict()
+        nbColors = getNeighbourColors(neighbours, aPrev)
+        # for each vertex u in G.V()
+        for i in range(len(G.V())):
+            u = G.V()[i]
+
+            # initialize nc, the new color of u
+            nc = a.get(u, aPrev[u])
+
+            # create a set "same" that will contain all vertices v that are "equal" to the current vertex u
+            same = set()
+
+            # for every vertex v that was equal
+            for v in aRevPrev[aPrev[u]]:
+
+                # if the vertices were "equal" and not exactly the same
+                if u != v:
+
+                    # Check if they are still "equal"
+                    if not haveSameNeighbours(u, v, nbColors):
+
+                        # they are not equal anymore, if we haven't updated nc already, do it now
+                        if nc == aPrev[u]:
+                            nc = nextColor
+                            nextColor += 1
+                    else:
+                        # they are still equal, add the vertex to our "same" set
+                        same.add(v)
+
+            # update the a[v] of every v in same
+            for v in same:
+
+                # If nc and a[v] (or the previous a[v]) differ, change a[v]
+                if nc != a.get(v, aPrev[v]):
+                    a[v] = nc
+                    addToRevDict(aRev, nc, v)
+
+            a[u] = nc
+            addToRevDict(aRev, nc, u)
 
     # set the colornums
     for v in a:
@@ -136,6 +211,7 @@ def getAllIsomorphisms(graphList):
     G = disjointUnionMulti(graphList)
 
     # execute the refineColors function on our union graph
+    a = refineColorsv2(G)
     a = refineColors(G)
     i = 1
 
@@ -159,7 +235,7 @@ def getAllIsomorphisms(graphList):
 
 
 if __name__ == "__main__":
-    gl = loadgraph("./data/colorref_smallexample_4_7.grl", readlist=True)
+    gl = loadgraph("./data/colorref_largeexample_4_1026.grl", readlist=True)
 
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
