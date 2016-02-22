@@ -109,9 +109,14 @@ def refineColorsv2(G: graph):
         a = dict()
         aRev = dict()
         nbColors = getNeighbourColors(neighbours, aPrev)
+
+        done = set()
         # for each vertex u in G.V()
         for i in range(len(G.V())):
-            u = G.V()[i]
+            u = G._V[i]
+
+            if u in done:
+                continue
 
             # initialize nc, the new color of u
             nc = a.get(u, aPrev[u])
@@ -143,6 +148,7 @@ def refineColorsv2(G: graph):
                 if nc != a.get(v, aPrev[v]):
                     a[v] = nc
                     addToRevDict(aRev, nc, v)
+                    done.add(v)
 
             a[u] = nc
             addToRevDict(aRev, nc, u)
@@ -212,7 +218,6 @@ def getAllIsomorphisms(graphList):
 
     # execute the refineColors function on our union graph
     a = refineColorsv2(G)
-    a = refineColors(G)
     i = 1
 
     # fill the groups based on our new color data
@@ -235,7 +240,7 @@ def getAllIsomorphisms(graphList):
 
 
 if __name__ == "__main__":
-    gl = loadgraph("./data/colorref_largeexample_4_1026.grl", readlist=True)
+    gl = loadgraph("./data/colorref_largeexample_6_960.grl", readlist=True)
 
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
