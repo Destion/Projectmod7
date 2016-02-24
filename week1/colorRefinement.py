@@ -35,7 +35,7 @@ def refineColors(G: graph):
     # Fill a with colors related to the degree of the vertex
     for v in G.V():
         a[v] = len(neighbours[v])
-        nextColor = max(len(neighbours[v]) + 1, nextColor)
+        nextColor = max(a[v] + 1, nextColor)
 
     # while the colors still change after an iteration
     while aPrev != a:
@@ -94,12 +94,12 @@ def refineColorsv2(G: graph):
     nextColor = 0
     # Fill a with colors related to the degree of the vertex
     for v in G.V():
-        if aRev.get(len(neighbours[v]), None) is None:
-            aRev[len(neighbours[v])] = {v}
-        else:
-            aRev[len(neighbours[v])].add(v)
         a[v] = len(neighbours[v])
-        nextColor = max(len(neighbours[v]) + 1, nextColor)
+        if aRev.get(a[v], None) is None:
+            aRev[a[v]] = {v}
+        else:
+            aRev[a[v]].add(v)
+        nextColor = max(a[v] + 1, nextColor)
 
     # while the colors still change after an iteration
     while aPrev != a:
