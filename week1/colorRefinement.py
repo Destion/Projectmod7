@@ -100,7 +100,7 @@ def refineColors(G: graph):
     return a
 
 
-def refineColorsv2(G: graph):
+def refineColorsv2(G: graph, useColornums=False):
 
     # a is a dict that contains a vertex as key and a color as value
     a = dict()
@@ -124,7 +124,10 @@ def refineColorsv2(G: graph):
     for v in G.V():
 
         # color of v = the degree of v (number of neighbours)
-        a[v] = len(neighbours[v])
+        if not useColornums:
+            a[v] = len(neighbours[v])
+        else:
+            a[v] = v.colornum
 
         addToRevDict(aRev, a[v], v)
 
