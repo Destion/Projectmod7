@@ -144,8 +144,7 @@ def refineColorsv2(G: graph):
         # pus all the vertices that we have already refined in the set done so we won't have to check them again
         done = set()
         # for each vertex u in G.V()
-        for i in range(len(G.V())):
-            u = G._V[i]
+        for u in G.V():
 
             # if u has already been refined earlier in this iteration, skip it now
             if u in done:
