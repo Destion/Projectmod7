@@ -2,7 +2,6 @@ import graphIO
 from basicgraphs import graph
 from graphIO import loadgraph
 from graphUtil import disjointUnionMulti, generateNeighbourList
-from util import compareListsUnordered
 
 
 def haveSameNeighbours(v1, v2, neighbourColors):
