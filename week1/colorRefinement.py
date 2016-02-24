@@ -1,4 +1,5 @@
 import graphIO
+from Colorref import colorref
 from basicgraphs import graph
 from graphIO import loadgraph
 from graphUtil import disjointUnionMulti, generateNeighbourList
@@ -229,6 +230,12 @@ def areIsomorph(G: graph, i1, i2, l1, l2, a):
 
     return True
 
+def refineColorsHenk(G: graph):
+    g = colorref(G)
+    a = dict()
+    for v in g.V():
+        a[v] = v.colornum
+    return a
 
 def getAllIsomorphisms(graphList):
     # Make a list of groups
@@ -270,7 +277,7 @@ def getAllIsomorphisms(graphList):
 
 
 if __name__ == "__main__":
-    gl = loadgraph("./data/colorref_largeexample_6_960.grl", readlist=True)
+    gl = loadgraph("./data/cographs1.grl", readlist=True)
 
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
