@@ -5,26 +5,41 @@ from graphUtil import disjointUnionMulti, generateNeighbourList
 
 
 def haveSameNeighbours(v1, v2, neighbourColors):
+
     if len(neighbourColors[v1]) != len(neighbourColors[v2]):
+        # if the degree is not equal, return False imediately
         return False
     return neighbourColors[v1] == neighbourColors[v2]
 
 
 def getNeighbourColors(neighbours, a):
+
+    # init a new dict nbColors (neighbour colors)
     nbColors = dict()
+
+    # this for loop loops over every vertex g (don't be disctracted by the neighbours part yet!)
     for g in neighbours:
         nbColors[g] = dict()
+
+        # loop over every neighbour of g and add its color to our dictionary of neighbour colors
+        # every vertex g has a value in the nbColor dict, with as value a dict that acts like a multiset
+        # a vertex g with 3 neighbours, 2 with color "1" and 1 with color "3" will give:
+        # nbColors[g] = {1: 2, 3: 1}
         for nb in neighbours[g]:
             nbColors[g][a[nb]] = nbColors[g].get(a[nb], 0) + 1
     return nbColors
 
+
 def addToRevDict(d: dict, k, e):
+    # a fast function operating on a dict d with a key k and as value a set
+    # this function will create a set containing e as value for key k if key k did not have a value in d yet
+    # if d already had a key k with as value a set, the function will add e to that set
     if d.get(k, None) is None:
         d[k] = {e}
     else:
         d[k].add(e)
 
-
+# depricated!!!
 def refineColors(G: graph):
     a = dict()
     aPrev = dict()
@@ -83,37 +98,56 @@ def refineColors(G: graph):
 
     return a
 
+
 def refineColorsv2(G: graph):
+
+    # a is a dict that contains a vertex as key and a color as value
     a = dict()
+
+    # the old a, from the previous iteration
     aPrev = dict()
+
+    # aRev (a reversed) contains a color as key and a set of vertices that have that color as value
     aRev = dict()
+
+    # the a reversed dict of the previous iteration
     aRevPrev = dict()
+
+    # generate a dict of vertex -> vertices that contains all the neighbours of the key vertex
     neighbours = generateNeighbourList(G)
 
     # define a number that gives a color that has not yet been chosen
     nextColor = 0
+
     # Fill a with colors related to the degree of the vertex
     for v in G.V():
+
+        # color of v = the degree of v (number of neighbours)
         a[v] = len(neighbours[v])
-        if aRev.get(a[v], None) is None:
-            aRev[a[v]] = {v}
-        else:
-            aRev[a[v]].add(v)
+
+        addToRevDict(aRev, a[v], v)
+
+        # make sure nextColor is always higher than the highest color that was already used
         nextColor = max(a[v] + 1, nextColor)
 
     # while the colors still change after an iteration
     while aPrev != a:
+
+        # set the Prev dicts to the previous values of a and aRev and reset a and aRev
         aPrev = a
         aRevPrev = aRev
         a = dict()
         aRev = dict()
+
         nbColors = getNeighbourColors(neighbours, aPrev)
 
+        # pus all the vertices that we have already refined in the set done so we won't have to check them again
         done = set()
         # for each vertex u in G.V()
         for i in range(len(G.V())):
             u = G._V[i]
 
+            # if u has already been refined earlier in this iteration, skip it now
             if u in done:
                 continue
 
@@ -155,7 +189,6 @@ def refineColorsv2(G: graph):
     # set the colornums
     for v in a:
         v.colornum = a[v]
-
     return a
 
 
