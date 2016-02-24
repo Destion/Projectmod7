@@ -30,7 +30,7 @@ def getNeighbourColors(neighbours, a):
     return nbColors
 
 
-def dictinator(d: dict, k, e):
+def addToRevDict(d: dict, k, e):
     # a fast function operating on a dict d with a key k and as value a set
     # this function will create a set containing e as value for key k if key k did not have a value in d yet
     # if d already had a key k with as value a set, the function will add e to that set
@@ -125,7 +125,7 @@ def refineColorsv2(G: graph):
         # color of v = the degree of v (number of neighbours)
         a[v] = len(neighbours[v])
 
-        dictinator(aRev, a[v], v)
+        addToRevDict(aRev, a[v], v)
 
         # make sure nextColor is always higher than the highest color that was already used
         nextColor = max(a[v] + 1, nextColor)
@@ -179,11 +179,11 @@ def refineColorsv2(G: graph):
                 # If nc and a[v] (or the previous a[v]) differ, change a[v]
                 if nc != a.get(v, aPrev[v]):
                     a[v] = nc
-                    dictinator(aRev, nc, v)
+                    addToRevDict(aRev, nc, v)
                     done.add(v)
 
             a[u] = nc
-            dictinator(aRev, nc, u)
+            addToRevDict(aRev, nc, u)
 
     # set the colornums
     for v in a:
