@@ -21,18 +21,18 @@ def colorref(G):
     return G
 
 
+if __name__ == "__main__":
+    begin=time()
+    G=loadgraph("./colorref_largeexample_4_1026.grl",readlist=True)
+    colorref(G[0][0])
+    writeDOT(G[0][0],"bla")
+    end=time()
+    print(end-begin)
 
-begin=time()
-G=loadgraph("./colorref_largeexample_4_1026.grl",readlist=True)
-colorref(G[0][0])
-writeDOT(G[0][0],"bla")
-end=time()
-print(end-begin)
-
-begin=time()
-G=loadgraph("./colorref_smallexample_4_16.grl",readlist=True)
-colorref(G[0][1])
-writeDOT(G[0][1],"bla")
-end=time()
-print(end-begin)
+    begin=time()
+    G=loadgraph("./colorref_smallexample_4_16.grl",readlist=True)
+    colorref(G[0][1])
+    writeDOT(G[0][1],"bla")
+    end=time()
+    print(end-begin)
 
