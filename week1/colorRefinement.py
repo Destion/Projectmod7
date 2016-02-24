@@ -193,7 +193,6 @@ def refineColorsv2(G: graph):
 
 def areIsomorph(G: graph, i1, i2, l1, l2, a):
     """
-
     :param G: The graph containing a disjoint union of all graphs
     :param i1: The index of the first vertex of G1 in G
     :param i2: The index of the first vertex of G2 in G

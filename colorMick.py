@@ -2,30 +2,37 @@ from graphIO import loadgraph, writeDOT
 
 
 def coloring(G):
-	for vertex in G.V():
-		vertex.oldcolor = -1
-		vertex.newcolor = -1
 
-	i = 0
-	while colorchanged(G.V()):
-		i += 1
-		for v in G.V():
-			v.oldcolor = v.newcolor
-			v.newcolor = -1
-			for u in G.V():
-				if neighbourcolor(v, u) and u.oldcolor == v.oldcolor:
-					u.newcolor = i
-					v.newcolor = i
+	verts = set()
+
+	for vertex in G.V():
+		vertex.oldcolor = len(vertex.nbs())
+		vertex.newcolor = len(vertex.nbs())
+		verts.add(vertex)
+
+	print(verts)
+	colordict = dict()
+
+	for v in verts:
+		if len(colordict) > 0:
+			for key in colordict.keys():
+				if key == v.oldcolor:
+					if len(colordict[key]) > 0:
+						colordict[key].add(v)
+						print("append")
+					else:
+						colordict[key] = set().add(v)
+						break
+			colordict[v.oldcolor] = set().add(v)
+		else:
+			colordict[v.oldcolor] = set().add(v)
+	print(colordict)
+
 
 	for vertexi in G.V():
+		print("Meer dingen")
 		vertexi.colornum = vertexi.oldcolor
 	writeDOT(G, "Test.dot")
-
-def colorchanged(G):
-	for v in G:
-		if v.oldcolor != v.newcolor:
-			return True
-	return False
 
 
 def neighbourcolor(x, y):
@@ -33,14 +40,14 @@ def neighbourcolor(x, y):
 		return False
 	temp1 = set()
 	temp2 = set()
-	for v in x.nbs():
-		temp1.add(v.color)
-	for u in y.nbs():
-		temp2.add(u.color)
-
+	for vx in x.nbs():
+		temp1.add(vx.oldcolor)
+	for vy in y.nbs():
+		temp2.add(vy.oldcolor)
+	print(temp1==temp2)
 	return temp1 == temp2
 
 
-G = loadgraph("colorref_smallexample_4_16.grl")
+G = loadgraph("colorref_smallexample_4_7.grl")
 
 coloring(G)
