@@ -41,7 +41,7 @@ def areIsomorph(g1: graph, g2: graph):
                 oldColoring.applyToGraphs(g1, g2)
             stack += newCCs
         else:
-            # tja, als ze niet equal zijn hoeft er eignelijk niet heel veel te gebreuren
+            # tja, als ze niet equal zijn hoeft er eigenlijk niet heel veel te gebreuren
             pass
     # als ze ooit wel isomorf waren , dan waren we nooit hier uitgekomen
     return False
@@ -61,9 +61,21 @@ def refineFurther(groups):
                 newGroups.append([g])
     return newGroups
 
+
+def getIsomorphismGroups(graphList):
+    """
+    The full algorithm that converts a list of graphs to a list of groups of isomorphic graphs
+    The outcome contains all elements of the input, in isomorphic groups. Every graph in a group is isomorphic with
+    every other graph in the groups.
+    :param graphList: A list of graphs
+    :return: A list containing smaller list. The smaller lists are groups of isomorphic graphs.
+    """
+    groups, G = getAllIsomorphisms(graphList)
+    return refineFurther(groups)
+
 if __name__ == "__main__":
-    gl = loadgraph("./../data/wheelstar12.grl", readlist=True)
-    gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(6), createCycleGraph(6)]]
+    gl = loadgraph("./../data/torus144.grl", readlist=True)
+    # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(6), createCycleGraph(6)]]
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
     print([len(group) for group in groups])

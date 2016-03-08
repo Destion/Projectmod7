@@ -3,11 +3,21 @@ from utilities.graphUtil import disjointUnionMulti
 
 
 class ColoringCombination(object):
+    """
+    This class contains the colorings of 2 graphs and makes it easier to check for certain properties.
+    A ColoringCombination will automatically define .equal and .bijection, the first is True if
+    coloring 1 and 2 contain the same colors in the same amount. The second is True if each color only exists
+    once in both colorings.
+    """
 
     def __init__(self, coloringG1: dict, coloringG2: dict, refined=False):
         self.generateCoreValues(coloringG1, coloringG2, refined)
 
     def generateCoreValues(self, coloringG1: dict, coloringG2: dict, refined):
+        """
+        Generates all the essential values like .equal and .bijection. Call this when the colorings have changed.
+        It is called on __init__ and after the colors have been refined.
+        """
         bijection = True
         equal = True
         g1Vertices = set(coloringG1.keys())
@@ -51,6 +61,15 @@ class ColoringCombination(object):
         self.refined = refined
 
     def buildNewColoringCombinations(self, color=-1):
+        """
+        Generates a list of new ColoringCombination objects.
+        The colorings have been changed in such a way that the first vertex of the given color in coloring 1
+        is mapped on every vertex in coloring 2 that has the same color. Every object in the list maps vertex 1 to a
+        different in  vertex in coloring 2
+        :param color: The color to test for. If left on -1 the object will pick a color from its set of colors that are
+            not unique in both graphs
+        :return: A list of new colorings that have NOT been refined yet
+        """
         if color == -1:
             color = self.multiColors.pop()
             self.multiColors.add(color)
@@ -92,7 +111,7 @@ class ColoringCombination(object):
         Refines the colors with the graphs
         :param g1: graph1
         :param g2: graph2
-        :return: niks
+        :return: Nothing, this function acts on the current object
         """
         if self.refined:
             print("Warning! Refining a ColorCombination that is already flagged as refined!")
