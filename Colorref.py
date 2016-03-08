@@ -1,5 +1,7 @@
-from graphIO import writeDOT, loadgraph
 from time import time
+
+from utilities.graphIO import writeDOT, loadgraph
+
 
 def colorref(G):
 

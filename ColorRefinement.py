@@ -1,5 +1,6 @@
 from basicgraphs import graph
-from graphIO import loadgraph, writeDOT
+
+from utilities.graphIO import loadgraph, writeDOT
 
 
 def refineColor(G: graph):

@@ -17,7 +17,7 @@ This module also supports edge weighted graphs: edges should/will have an (integ
 # updated 2-2-2015: writeDOT can also write directed graphs.
 # updated 5-2-2015: no black fill color used, when more than numcolors**2 vertices.
 
-import basicgraphs
+from utilities import basicgraphs
 
 defaultcolorscheme = "paired12"
 numcolors = 12

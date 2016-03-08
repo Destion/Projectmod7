@@ -1,4 +1,4 @@
-from basicgraphs import graph
+from utilities.basicgraphs import graph
 
 """
 This file defines useful functions for graphs that are not included in basicGraphs
@@ -51,7 +51,7 @@ def disjointUnionMulti(graphList, holdColor=False):
     for i in range(len(combinedList)):
         v = combinedList[i]
         if holdColor:
-            f.V()[i] = v.colornum
+            f.V()[i].colornum = v.colornum
         for e in inclist[v]:
             if e.tail() == v:
                 f.addedge(f[i], f[combinedList.index(e.head())])

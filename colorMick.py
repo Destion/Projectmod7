@@ -1,4 +1,4 @@
-from graphIO import loadgraph, writeDOT
+from utilities.graphIO import loadgraph, writeDOT
 
 
 def coloring(G):

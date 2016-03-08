@@ -1,8 +1,9 @@
-import graphIO
+from utilities.basicgraphs import graph
+from utilities.graphUtil import disjointUnionMulti, generateNeighbourList
+
 from Colorref import colorref
-from basicgraphs import graph
-from graphIO import loadgraph
-from graphUtil import disjointUnionMulti, generateNeighbourList
+from utilities import graphIO
+from utilities.graphIO import loadgraph
 
 
 def haveSameNeighbours(v1, v2, neighbourColors):
@@ -240,7 +241,8 @@ def refineColorsHenk(G: graph):
         a[v] = v.colornum
     return a
 
-def getAllIsomorphisms(graphList):
+
+def getAllIsomorphisms(graphList, useColornums=False):
     # Make a list of groups
     groups = [[graphList[0]]]
 
@@ -254,10 +256,10 @@ def getAllIsomorphisms(graphList):
         lenghts.append(len(g.V()))
 
     # create one gaint graph containing all the graphs in our graphlist
-    G = disjointUnionMulti(graphList)
+    G = disjointUnionMulti(graphList, useColornums)
 
     # execute the refineColors function on our union graph
-    a = refineColorsv2(G)
+    a = refineColorsv2(G, useColornums)
     i = 1
 
     # fill the groups based on our new color data
@@ -276,16 +278,22 @@ def getAllIsomorphisms(graphList):
             groups.append([g])
             groupStartIndices.append(i)
         i += 1
+
+    for graphI in range(len(graphList)):
+        for i in range(len(graphList[graphI].V())):
+            graphList[graphI].V()[i].colornum = G.V()[startIndices[graphI] + i].colornum
+
+
     return groups, G
 
 
 if __name__ == "__main__":
-    gl = loadgraph("./data/cographs1.grl", readlist=True)
+    gl = loadgraph("./../data/colorref_smallexample_4_7.grl", readlist=True)
 
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
     graphIO.writeDOT(G, "./output.dot")
     for group in groups:
         print("Group with size: ", len(group))
-        graphIO.writeDOT(disjointUnionMulti(group), "./output%i.dot" % i)
+        graphIO.writeDOT(group[0], "./output%i.dot" % i)
         i += 1
