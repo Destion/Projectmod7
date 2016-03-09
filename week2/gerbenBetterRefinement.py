@@ -74,11 +74,11 @@ def getIsomorphismGroups(graphList):
     return refineFurther(groups)
 
 if __name__ == "__main__":
-    gl = loadgraph("./../data/torus144.grl", readlist=True)
+    gl = loadgraph("./../data/trees90.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(6), createCycleGraph(6)]]
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
     print([len(group) for group in groups])
     groups = refineFurther(groups)
-    print([len(group) for group in groups])
+    print([[gl[0].index(g) for g in group] for group in groups])
     writeDOT(disjointUnionMulti([g for group in groups for g in group], holdColor=True), "./outputUnion2.dot")
