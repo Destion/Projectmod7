@@ -1,4 +1,3 @@
-from utilities.graphIO import loadgraph, writeDOT
 from utilities.graphUtil import generateNeighbourList, disjointUnionMulti
 from utilities.pythonex1 import createCycleGraph
 
@@ -17,8 +16,7 @@ def generatePartitions(G):
     for k in degrees:
         p.append(degrees[k])
 
-
-    w = {0}
+    w = set(range(len(p)-1))
     while w:
         aN = w.pop()
         a = p[aN]
@@ -27,7 +25,6 @@ def generatePartitions(G):
             for va in a:
                 nbs |= neighbours[va]
             x = nbs | degrees[degree]
-
             for yN in {c for c in range(len(p)) if x&p[c] and p[c]-x}:
                 y = p[yN]
                 p[yN] = x&y
@@ -41,13 +38,29 @@ def generatePartitions(G):
                         w.add(len(p) - 1)
     return p
 
+
+def writeColors(partitions):
+    for i in range(len(partitions)):
+        for v in partitions[i]:
+            v.colornum = i
+
+
 if __name__ == "__main__":
-    gl = loadgraph("./../data/trees36.grl", readlist=True)
+    from utilities.graphIO import loadgraph, writeDOT
+    from trees.automorphismsCounter import countTreeAutomorphisms
+
+    gl = loadgraph("./../data/bigtrees2.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
     i = 0
-    p = generatePartitions(gl[0][0])
-    for i in range(len(p)):
-        for v in p[i]:
-            v.colornum = i
-    writeDOT(gl[0][0], "output.dot")
+    g = gl[0][1]
+    #g = loadgraph("./../data/threepaths10240.gr")
+
+    p = generatePartitions(g)
     print(p)
+    writeColors(p)
+    automorphisms = 1
+    for part in p:
+        automorphisms *= len(part)
+    print("Fout : ", automorphisms)
+    print("Goed?: ", countTreeAutomorphisms(g))
+    writeDOT(g, "output.dot")

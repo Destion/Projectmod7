@@ -3,6 +3,7 @@
 
 *.iml
 *.grl
+*.gr
 
 ## Directory-based project format:
 .idea/

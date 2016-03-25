@@ -57,3 +57,11 @@ def disjointUnionMulti(graphList, holdColor=False):
                 f.addedge(f[i], f[combinedList.index(e.head())])
 
     return f
+
+
+def createGraph(n, edges):
+    g = graph(n)
+    for edge in edges:
+        (head, tail) = edge
+        g.addedge(g[head], g[tail])
+    return g
