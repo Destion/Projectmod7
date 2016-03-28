@@ -16,7 +16,7 @@ def generatePartitions(G):
     for k in degrees:
         p.append(degrees[k])
 
-    w = set(range(len(p)-1))
+    w = set(range(len(p)))
     while w:
         aN = w.pop()
         a = p[aN]
@@ -47,7 +47,7 @@ def writeColors(partitions):
 
 if __name__ == "__main__":
     from utilities.graphIO import loadgraph, writeDOT
-    from trees.automorphismsCounter import countTreeAutomorphisms
+    from trees.automorphismsCounter import countTreeAutomorphismsLS, countTreeAutomorphismsRS
 
     gl = loadgraph("./../data/bigtrees2.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
@@ -55,12 +55,17 @@ if __name__ == "__main__":
     g = gl[0][1]
     #g = loadgraph("./../data/threepaths10240.gr")
 
+
     p = generatePartitions(g)
     print(p)
-    writeColors(p)
+    # writeColors(p)
     automorphisms = 1
     for part in p:
         automorphisms *= len(part)
     print("Fout : ", automorphisms)
-    print("Goed?: ", countTreeAutomorphisms(g))
+
+    print("Goed?: ", countTreeAutomorphismsLS(g))
+    print("Goed?: ", countTreeAutomorphismsRS(g))
+
+
     writeDOT(g, "output.dot")
