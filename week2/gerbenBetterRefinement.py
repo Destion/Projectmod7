@@ -25,13 +25,14 @@ def buildColoringCombinationFromGraphs(g1: graph, g2: graph):
 def areIsomorph(g1: graph, g2: graph):
     stack = [buildColoringCombinationFromGraphs(g1, g2)]
     oldColoring = buildColoringCombinationFromGraphs(g1, g2)
+    automorphisms = 0
     while len(stack) != 0:
         cc = stack[-1]
         stack = stack[:-1]
 
         if cc.bijection:
             # gevonden :D
-            return True
+            automorphisms += 1
         elif cc.equal:
             # Wel equal, maar geen bijection. Dubbele kleuren dus. Tijd om verder te zoeken
             newCCs = cc.buildNewColoringCombinations()
@@ -44,7 +45,7 @@ def areIsomorph(g1: graph, g2: graph):
             # tja, als ze niet equal zijn hoeft er eigenlijk niet heel veel te gebreuren
             pass
     # als ze ooit wel isomorf waren , dan waren we nooit hier uitgekomen
-    return False
+    return automorphisms
 
 
 def refineFurther(groups):
@@ -54,6 +55,7 @@ def refineFurther(groups):
             placed = False
             for newGroup in newGroups:
                 if newGroup[0] in group and areIsomorph(g, newGroup[0]):
+                    print(areIsomorph(g, newGroup[0]))
                     newGroup.append(g)
                     placed = True
                     break
@@ -74,8 +76,8 @@ def getIsomorphismGroups(graphList):
     return refineFurther(groups)
 
 if __name__ == "__main__":
-    gl = loadgraph("./../data/trees90.grl", readlist=True)
-    # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(6), createCycleGraph(6)]]
+    # gl = loadgraph("./../data/torus24.grl", readlist=True)
+    gl = [[disjointUnionMulti([createCycleGraph(1), createCycleGraph(1)]), createCycleGraph(2), createCycleGraph(2)]]
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
     print([len(group) for group in groups])

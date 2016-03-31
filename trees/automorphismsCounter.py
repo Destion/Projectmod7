@@ -1,5 +1,6 @@
 import math
 
+from utilities.graphIO import writeDOT
 from utilities.graphUtil import generateNeighbourList
 from week3.gSnellerPartitioning import generatePartitions
 
@@ -9,8 +10,32 @@ def pickFromSet(s):
     s.add(e)
     return e
 
+fileNum = 0
 
-def countTreeAutomorphismsLS(G):
+
+def drawProgress(G, v, color, done, queue=None):
+    global fileNum
+    for vv in G.V():
+        vv.colornum = -1
+    for dv in done:
+        dv.colornum = 1
+    if queue:
+        for c in queue:
+            if type(c) == tuple:
+                vertex, p = c
+                vertex.colornum = 4
+            else:
+                for cv in c:
+                    cv.colornum = 4
+    for cv in color:
+        cv.colornum = 2
+    if v:
+        v.colornum = 3
+    writeDOT(G, "progress%i.dot" % fileNum)
+    fileNum += 1
+
+
+def countTreeAutomorphismsLS(G, visualize=False):
     p = generatePartitions(G)
     n = generateNeighbourList(G)
     degrees = dict()
@@ -37,13 +62,13 @@ def countTreeAutomorphismsLS(G):
             done = done | color
 
     automorphisms = 1
-    ronde = 1
+
     while queue: # is not empty
         newQueue = []
         for color in queue:
-
             v = pickFromSet(color)
-            v.colornum = ronde
+            if visualize:
+                drawProgress(G, v, color, done, queue)
             parent = None
             for neighbour in n[v]:
                 if len(n[neighbour] & color) > 1 :
@@ -58,7 +83,6 @@ def countTreeAutomorphismsLS(G):
                     newQueue.append(color)
                     continue
 
-
             if parent:
                 if len(colorOf[parent]) > 1 and parent not in done:
                     newQueue.append(colorOf[parent])
@@ -67,15 +91,16 @@ def countTreeAutomorphismsLS(G):
         queue = newQueue
         for c in queue:
             done |= c
-        ronde += 1
 
+    if visualize:
+        drawProgress(G, None, set(), done, queue)
     return automorphisms
 
-def countTreeAutomorphismsRS(G):
+
+def countTreeAutomorphismsRS(G, visualize=False):
     p = generatePartitions(G)
     n = generateNeighbourList(G)
     degrees = dict()
-    step = 1
 
     for v in G.V():
         degree = len(n[v])
@@ -101,14 +126,12 @@ def countTreeAutomorphismsRS(G):
         for c in p:
             if len(c) == 2:
                 r, l = c
-                if l in n[r]:
+
+                if True or l in n[r]:
                     queue.append((r, None))
                     break
     while queue:
         vertex, parent = queue[-1]
-        vertex.label = step
-        vertex.colornum = step
-        step += 1
         color = colorOf[vertex]
         del queue[-1]
         for v in n[vertex] - done:
@@ -119,7 +142,11 @@ def countTreeAutomorphismsRS(G):
             automorphisms *= math.factorial(len(n[parent] & color))**(len(colorOf[parent]))
         else:
             automorphisms *= math.factorial(len(color))
+        if visualize:
+            drawProgress(G, vertex, color, done, queue)
         done |= color
+    if visualize:
+        drawProgress(G, None, set(), done, queue)
     return automorphisms
 
 

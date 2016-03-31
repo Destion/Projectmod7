@@ -2,7 +2,7 @@ from utilities.graphUtil import generateNeighbourList, disjointUnionMulti
 from utilities.pythonex1 import createCycleGraph
 
 
-def generatePartitions(G):
+def generatePartitions(G, usecolors=False):
     neighbours = generateNeighbourList(G)
     p = []
     degrees = dict()
@@ -13,8 +13,23 @@ def generatePartitions(G):
         else:
             degrees[degree].add(v)
 
-    for k in degrees:
-        p.append(degrees[k])
+    if usecolors:
+        colors = dict()
+        for v in G.V():
+            if v.colornum in colors.keys():
+                colors[v.colornum].add(v)
+            else:
+                colors[v.colornum] = {v}
+        keys = list(colors.keys())
+        print(colors)
+        for v in G.V():
+            print(v, v.colornum)
+        for key in keys:
+            p.append(colors[key])
+        print(p)
+    else:
+        for k in degrees:
+            p.append(degrees[k])
 
     w = set(range(len(p)))
     while w:
@@ -49,10 +64,10 @@ if __name__ == "__main__":
     from utilities.graphIO import loadgraph, writeDOT
     from trees.automorphismsCounter import countTreeAutomorphismsLS, countTreeAutomorphismsRS
 
-    gl = loadgraph("./../data/bigtrees2.grl", readlist=True)
+    gl = loadgraph("./../data/trees90.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
     i = 0
-    g = gl[0][1]
+    g = gl[0][0]
     #g = loadgraph("./../data/threepaths10240.gr")
 
 
@@ -63,7 +78,7 @@ if __name__ == "__main__":
     for part in p:
         automorphisms *= len(part)
     print("Fout : ", automorphisms)
-
+    writeColors(p)
     print("Goed?: ", countTreeAutomorphismsLS(g))
     print("Goed?: ", countTreeAutomorphismsRS(g))
 
