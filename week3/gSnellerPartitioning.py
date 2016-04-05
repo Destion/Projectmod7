@@ -1,7 +1,7 @@
 import time
 
-from utilities.graphUtil import generateNeighbourList, disjointUnionMulti, isConnected, isTree
-from utilities.pythonex1 import createCycleGraph
+from utilities.graphUtil import generateNeighbourList
+
 
 def generatePfromColors(G):
     p = []
@@ -18,53 +18,6 @@ def generatePfromColors(G):
 
 
 def generatePartitions(G, usecolors=False):
-    neighbours = generateNeighbourList(G)
-    p = []
-    degrees = dict()
-    for v in G.V():
-        degree = len(neighbours[v])
-        if degrees.get(degree, -1) == -1:
-            degrees[degree] = {v}
-        else:
-            degrees[degree].add(v)
-
-    if usecolors:
-        p = generatePfromColors(G)
-    else:
-        for k in degrees:
-            p.append(degrees[k])
-
-    w = set(range(len(p)))
-    while w:
-        # print(w)
-        aN = w.pop()
-        a = p[aN]
-        for color in p:
-            if color == a:
-                continue
-            nbs = set()
-            for va in a:
-                nbs |= neighbours[va]
-            x = nbs | color
-            for yN in range(len(pSplit)):
-                if pSplit[yN] != color and len(p[yN]) > 1:
-                    y = pSplit[yN]
-                    both = x&y
-                    ynotx = y-x
-                    if both and ynotx:
-                        p[yN] = both
-                        p.append(ynotx)
-                        if yN in w:
-                            w.add(len(p)-1)
-                        else:
-                            if len(both) <= len(ynotx):
-                                w.add(yN)
-                            else:
-                                w.add(len(p) - 1)
-    return p
-
-
-def generatePartitionsv2(G, usecolors=False):
     neighbours = generateNeighbourList(G)
     p = []
     pSplit = []
@@ -101,13 +54,13 @@ def generatePartitionsv2(G, usecolors=False):
                 for yN in range(len(p)):
                     if len(p[yN]) > 1:
                         y = p[yN]
-                        both = x&y
-                        ynotx = y-x
+                        both = x & y
+                        ynotx = y - x
                         if both and ynotx:
                             p[yN] = both
                             p.append(ynotx)
                             if yN in w:
-                                w.add(len(p)-1)
+                                w.add(len(p) - 1)
                             else:
                                 if len(both) <= len(ynotx):
                                     w.add(yN)
@@ -132,7 +85,7 @@ if __name__ == "__main__":
     g = gl[0][0]
     g = loadgraph("./../data/threepaths10240.gr")
     t = time.time()
-    p = generatePartitionsv2(g)
+    p = generatePartitions(g)
     print(time.time() - t)
     print(p)
     writeColors(p)
