@@ -1,6 +1,5 @@
-from week1.colorRefinement import refineColorsv2
 from utilities.graphUtil import disjointUnionMulti
-from week3.gSnellerPartitioning import generatePartitions, generatePartitions
+from week3.gSnellerPartitioning import generatePartitions
 
 
 class ColoringCombination(object):
