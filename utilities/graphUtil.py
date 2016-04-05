@@ -65,3 +65,19 @@ def createGraph(n, edges):
         (head, tail) = edge
         g.addedge(g[head], g[tail])
     return g
+
+
+def isConnected(G: graph):
+    # Graph search
+    nbs = generateNeighbourList(G)
+    done = set()
+    queue = {G.V()[0]}
+    while queue:
+        v = queue.pop()
+        done.add(v)
+        queue |= nbs[v] - done
+    return len(done) == len(G.V())
+
+
+def isTree(G: graph):
+    return isConnected(G) and len(G.V())-1 == len(G.E())

@@ -1,6 +1,6 @@
 import time
 
-from utilities.graphUtil import generateNeighbourList, disjointUnionMulti
+from utilities.graphUtil import generateNeighbourList, disjointUnionMulti, isConnected, isTree
 from utilities.pythonex1 import createCycleGraph
 
 def generatePfromColors(G):
@@ -20,7 +20,6 @@ def generatePfromColors(G):
 def generatePartitions(G, usecolors=False):
     neighbours = generateNeighbourList(G)
     p = []
-    pSplit = []
     degrees = dict()
     for v in G.V():
         degree = len(neighbours[v])
@@ -31,11 +30,9 @@ def generatePartitions(G, usecolors=False):
 
     if usecolors:
         p = generatePfromColors(G)
-        pSplit = generatePfromColors(G)
     else:
         for k in degrees:
             p.append(degrees[k])
-            pSplit.append(degrees[k])
 
     w = set(range(len(p)))
     while w:
@@ -70,6 +67,7 @@ def generatePartitions(G, usecolors=False):
 def generatePartitionsv2(G, usecolors=False):
     neighbours = generateNeighbourList(G)
     p = []
+    pSplit = []
     degrees = dict()
     for v in G.V():
         degree = len(neighbours[v])
@@ -80,9 +78,11 @@ def generatePartitionsv2(G, usecolors=False):
 
     if usecolors:
         p = generatePfromColors(G)
+        pSplit = generatePfromColors(G)
     else:
         for k in degrees:
             p.append(degrees[k])
+            pSplit.append(degrees[k])
 
     w = set(range(len(p)))
     while w:
@@ -94,7 +94,7 @@ def generatePartitionsv2(G, usecolors=False):
         for va in a:
             nbs |= neighbours[va]
         # print("nbs: ", nbs)
-        for color in p:
+        for color in pSplit:
             x = nbs & color
             # print("nbs & color: ", x)
             if x:
@@ -126,12 +126,11 @@ if __name__ == "__main__":
     from utilities.graphIO import loadgraph, writeDOT
     from trees.automorphismsCounter import countTreeAutomorphismsLS, countTreeAutomorphismsRS
 
-    gl = loadgraph("./../data/bigtrees1.grl", readlist=True)
-    # gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
+    gl = loadgraph("./../data/products72.grl", readlist=True)
+    #gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
     i = 0
     g = gl[0][0]
-    g = loadgraph("./../data/threepaths1280.gr")
-
+    g = loadgraph("./../data/threepaths10240.gr")
     t = time.time()
     p = generatePartitionsv2(g)
     print(time.time() - t)
