@@ -1,6 +1,8 @@
+from trees.automorphismsCounter import countTreeAutomorphismsRS
 from utilities.basicgraphs import *
-from utilities.graphIO import loadgraph
-from utilities.graphUtil import isConnected
+from utilities.graphIO import loadgraph, writeDOT
+from utilities.graphUtil import isConnected, isTree
+from utilities.pythonex1 import createCycleGraph
 from week1.colorRefinement import getAllIsomorphisms
 from week2.coloring import *
 
@@ -74,8 +76,11 @@ def refineFurther(groups, aut):
                 print("New group made...")
                 if aut:
                     print("Counting automorphisms...")
-                    print("Graph is %sconnected"%("" if isConnected(g) else "not "))
-                    automorphisms[g] = areIsomorph(g, disjointUnionMulti([g], True), True)
+                    if isTree(g):
+                        print("Tree detected: using optimalized algorithm...")
+                        automorphisms[g] = countTreeAutomorphismsRS(g)
+                    else:
+                        automorphisms[g] = areIsomorph(g, disjointUnionMulti([g], True), True)
     return newGroups, automorphisms
 
 
@@ -107,6 +112,6 @@ def getIsomorphismGroups(graphList, aut=False):
     return further
 
 if __name__ == "__main__":
-    gl = loadgraph("./../data/products72.grl", readlist=True)
+    gl = loadgraph("./../data/trees90.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(1), createCycleGraph(1)]), createCycleGraph(2), createCycleGraph(2)]]
     getIsomorphismGroups(gl[0], True)
