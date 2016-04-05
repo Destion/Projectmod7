@@ -94,7 +94,7 @@ def output(gl, isomorphisms, automorphisms):
     for group in isomorphisms:
         str2 = str([gl.index(g) for g in group])
         if automorphisms:
-            print(str2, " " * (len(str1)- len(str2)), automorphisms[group[0]])
+            print(str2, " " * (len(str1) - len(str2)), automorphisms[group[0]])
         else:
             print(str2)
 

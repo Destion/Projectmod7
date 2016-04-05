@@ -88,6 +88,9 @@ def countTreeAutomorphismsLS(G, visualize=False):
                     newQueue.append(colorOf[parent])
                 automorphisms *= math.factorial(len(n[parent] & color))**(len(colorOf[parent]))
                 done |= color
+            else:
+                if len(color) == 2 and len(color&n[v]) == 1:
+                    automorphisms *= 2
         queue = newQueue
         for c in queue:
             done |= c
