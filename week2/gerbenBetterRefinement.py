@@ -1,7 +1,6 @@
 from utilities.basicgraphs import *
-from utilities.graphIO import loadgraph, writeDOT
+from utilities.graphIO import loadgraph
 from utilities.graphUtil import isConnected
-from utilities.pythonex1 import createCycleGraph
 from week1.colorRefinement import getAllIsomorphisms
 from week2.coloring import *
 
