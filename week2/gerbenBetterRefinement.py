@@ -2,6 +2,7 @@ from trees.automorphismsCounter import countTreeAutomorphismsRS
 from utilities.basicgraphs import *
 from utilities.graphIO import loadgraph
 from utilities.graphUtil import isTree
+from utilities.pythonex1 import createCycleGraph
 from week1.colorRefinement import getAllIsomorphisms
 from week2.coloring import *
 
@@ -60,7 +61,7 @@ def refineFurther(groups, aut):
     for group in groups:
         for g in group:
             print()
-            print("Checking graph %i/%i"%(counter, graphs))
+            print("Checking graph %i (%i/%i)"%(counter - 1, counter, graphs))
             counter += 1
             placed = False
             for newGroup in newGroups:
@@ -84,21 +85,22 @@ def refineFurther(groups, aut):
 
 
 def output(gl, isomorphisms, automorphisms):
-    str1 = "Sets of isomorphic graphs:\t\t\t"
+    str1 = "Sets of isomorphic graphs:   "
     print("\n\n")
     if automorphisms:
-        print(str1, "Automorphisms:")
+        print(str1, " Automorphisms:")
     else:
         print(str1)
     for group in isomorphisms:
+        str2 = str([gl.index(g) for g in group])
         if automorphisms:
-            print([gl.index(g) for g in group], " " * len(str1), automorphisms[group[0]])
+            print(str2, " " * (len(str1)- len(str2)), automorphisms[group[0]])
         else:
-            print([gl.index(g) for g in group])
+            print(str2)
 
 
 def getIsomorphismGroups(graphList, aut=False):
-    """
+    """[gl.index(g) for g in group]
     The full algorithm that converts a list of graphs to a list of groups of isomorphic graphs
     The outcome contains all elements of the input, in isomorphic groups. Every graph in a group is isomorphic with
     every other graph in the groups.
@@ -111,6 +113,6 @@ def getIsomorphismGroups(graphList, aut=False):
     return further
 
 if __name__ == "__main__":
-    gl = loadgraph("./../data/trees90.grl", readlist=True)
+    gl = loadgraph("./../data/bigtrees1.grl", readlist=True)
     # gl = [[disjointUnionMulti([createCycleGraph(1), createCycleGraph(1)]), createCycleGraph(2), createCycleGraph(2)]]
     getIsomorphismGroups(gl[0], True)
