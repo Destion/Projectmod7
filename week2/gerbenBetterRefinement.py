@@ -76,8 +76,8 @@ def getIsomorphismGroups(graphList):
     return refineFurther(groups)
 
 if __name__ == "__main__":
-    # gl = loadgraph("./../data/torus24.grl", readlist=True)
-    gl = [[disjointUnionMulti([createCycleGraph(1), createCycleGraph(1)]), createCycleGraph(2), createCycleGraph(2)]]
+    gl = loadgraph("./../data/torus24.grl", readlist=True)
+    # gl = [[disjointUnionMulti([createCycleGraph(1), createCycleGraph(1)]), createCycleGraph(2), createCycleGraph(2)]]
     i = 0
     groups, G = getAllIsomorphisms(gl[0])
     print([len(group) for group in groups])

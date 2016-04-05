@@ -1,6 +1,6 @@
 from week1.colorRefinement import refineColorsv2
 from utilities.graphUtil import disjointUnionMulti
-from week3.gSnellerPartitioning import generatePartitions
+from week3.gSnellerPartitioning import generatePartitions, generatePartitionsv2
 
 
 class ColoringCombination(object):
@@ -119,14 +119,14 @@ class ColoringCombination(object):
         self.applyToGraphs(g1, g2)
         g = disjointUnionMulti([g1, g2], True)
 
-        p = generatePartitions(g, True)
+        p = generatePartitionsv2(g, True)
         newColoring = dict()
         for c in range(len(p)):
             for v in p[c]:
                 newColoring[v] = c
-        print("Part: ", newColoring)
-        newColoring = refineColorsv2(g, True)
-        print("Rev2: ", newColoring)
+
+        # newColoring = refineColorsv2(g, True)
+
         newColoringG1 = dict()
         gV = g.V()
         g1V = g1.V()
