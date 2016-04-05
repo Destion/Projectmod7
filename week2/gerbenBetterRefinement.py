@@ -1,8 +1,7 @@
 from trees.automorphismsCounter import countTreeAutomorphismsRS
 from utilities.basicgraphs import *
-from utilities.graphIO import loadgraph, writeDOT
-from utilities.graphUtil import isConnected, isTree
-from utilities.pythonex1 import createCycleGraph
+from utilities.graphIO import loadgraph
+from utilities.graphUtil import isTree
 from week1.colorRefinement import getAllIsomorphisms
 from week2.coloring import *
 
