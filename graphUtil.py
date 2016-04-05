@@ -1,6 +1,4 @@
-import time
-
-from utilities.basicgraphs import graph
+from basicgraphs import graph
 
 """
 This file defines useful functions for graphs that are not included in basicGraphs
