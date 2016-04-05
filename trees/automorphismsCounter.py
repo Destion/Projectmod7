@@ -2,7 +2,7 @@ import math
 
 from utilities.graphIO import writeDOT
 from utilities.graphUtil import generateNeighbourList
-from week3.gSnellerPartitioning import generatePartitions, generatePartitionsv2
+from week3.gSnellerPartitioning import generatePartitions, generatePartitions
 
 
 def pickFromSet(s):
@@ -36,7 +36,7 @@ def drawProgress(G, v, color, done, queue=None):
 
 
 def countTreeAutomorphismsLS(G, visualize=False):
-    p = generatePartitionsv2(G)
+    p = generatePartitions(G)
     n = generateNeighbourList(G)
     degrees = dict()
 
@@ -98,7 +98,7 @@ def countTreeAutomorphismsLS(G, visualize=False):
 
 
 def countTreeAutomorphismsRS(G, visualize=False):
-    p = generatePartitionsv2(G)
+    p = generatePartitions(G)
     n = generateNeighbourList(G)
     degrees = dict()
 
