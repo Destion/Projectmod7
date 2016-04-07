@@ -1,8 +1,6 @@
-import math
-
-from utilities.graphIO import writeDOT
-from utilities.graphUtil import generateNeighbourList
-from week3.gSnellerPartitioning import generatePartitions, generatePartitions
+from graphIO import writeDOT
+from graphUtil import generateNeighbourList
+from gSnellerPartitioning import generatePartitions
 
 
 def pickFromSet(s):
@@ -11,6 +9,14 @@ def pickFromSet(s):
     return e
 
 fileNum = 0
+
+def factorial(x):
+    result = 1
+    if x < 1:
+        raise ValueError
+    for i in range(x, 0, -1):
+        result *= i
+    return result
 
 
 def drawProgress(G, v, color, done, queue=None):
@@ -86,7 +92,7 @@ def countTreeAutomorphismsLS(G, visualize=False):
             if parent:
                 if len(colorOf[parent]) > 1 and parent not in done:
                     newQueue.append(colorOf[parent])
-                automorphisms *= math.factorial(len(n[parent] & color))**(len(colorOf[parent]))
+                automorphisms *= factorial(len(n[parent] & color))**(len(colorOf[parent]))
                 done |= color
             else:
                 if len(color) == 2 and len(color&n[v]) == 1:
@@ -142,9 +148,9 @@ def countTreeAutomorphismsRS(G, visualize=False):
                 queue.append((v, vertex))
                 done |= colorOf[v]
         if parent:
-            automorphisms *= math.factorial(len(n[parent] & color))**(len(colorOf[parent]))
+            automorphisms *= factorial(len(n[parent] & color))**(len(colorOf[parent]))
         else:
-            automorphisms *= math.factorial(len(color))
+            automorphisms *= factorial(len(color))
         if visualize:
             drawProgress(G, vertex, color, done, queue)
         done |= color

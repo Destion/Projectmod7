@@ -1,6 +1,4 @@
-import time
-
-from utilities.graphUtil import generateNeighbourList
+from graphUtil import generateNeighbourList
 
 
 def generatePfromColors(G):
@@ -74,23 +72,3 @@ def writeColors(partitions):
         for v in partitions[i]:
             v.colornum = i
 
-
-if __name__ == "__main__":
-    from utilities.graphIO import loadgraph, writeDOT
-    from trees.automorphismsCounter import countTreeAutomorphismsLS, countTreeAutomorphismsRS
-
-    gl = loadgraph("./../data/trees90.grl", readlist=True)
-    #gl = [[disjointUnionMulti([createCycleGraph(3), createCycleGraph(3)]), createCycleGraph(7), createCycleGraph(6)]]
-    i = 0
-    g = gl[0][0]
-    # g = loadgraph("./../data/threepaths10240.gr")
-    t = time.time()
-    p = generatePartitions(g)
-    print(time.time() - t)
-    print(p)
-    writeColors(p)
-    print("Goed?: ", countTreeAutomorphismsLS(g))
-    print("Goed?: ", countTreeAutomorphismsRS(g))
-
-
-    writeDOT(g, "output.dot")
